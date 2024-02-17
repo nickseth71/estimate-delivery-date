@@ -1,0 +1,31 @@
+  {
+    "name": "Estimate Delivery",
+    "settings": [
+      {
+        "type": "text",
+        "id": "est_xlsx",
+        "label": "xlsx File",
+        "placeholder": "required...",
+        "default": "https:\/\/cdn.shopify.com\/s\/files\/1\/1772\/1711\/files\/Zoe_WORKING_UPWORK_Aus_Post_standard_postcode_file_pc001_24022023.xlsx?v=1679687274",
+        "info": "[Go to files](\/admin\/content\/files) and upload a xlsx file and copy link then paste here"
+      },
+      {
+        "type":"html",
+        "id":"title",
+        "label":"Heading",
+        "default":"CHECK FOR DELIVERY DETAILS"
+      },
+      {
+        "type":"html",
+        "id":"subtitle",
+        "label":"Sub Heading",
+        "default":"Delivering in <strong>India</strong>"
+      }
+      {
+        "type": "text",
+        "id": "est-errer-message",
+        "label": "Error Message",
+        "default": "Shipping not available for current Pin Code"
+      }
+    ]
+  }
