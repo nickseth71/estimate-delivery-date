@@ -1,0 +1,14 @@
+{% if settings.est_xlsx != blank %}
+{% comment %}
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
+{% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+<input type="hidden" value="{{ settings.est_xlsx }}" data-error="{{ settings.est-errer-message }}" data-zipcode="{{ customer.address.properties.zip }}" id="xlsx_file_url">
+<script src="{{ 'est-delivery.js' | asset_url }}" defer></script>
+<style>
+  button#continue_button[disabled] {opacity: 0.8;cursor: not-allowed;}
+  .zip-code-error {margin-top: 10px;text-align: right;color: red;width: 100%;}
+  .step__sections .step__footer {flex-wrap: wrap;}
+  .step__sections .step__footer .zip-code-error {margin-bottom: 10px;}
+</style>
+{% endif %}
