@@ -1,14 +1,50 @@
 {% if settings.est_xlsx != blank %}
-{% comment %}
-<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
-{% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-<input type="hidden" value="{{ settings.est_xlsx }}" data-error="{{ settings.est-errer-message }}" data-zipcode="{{ customer.address.properties.zip }}" id="xlsx_file_url">
-<script src="{{ 'est-delivery.js' | asset_url }}" defer></script>
-<style>
-  button#continue_button[disabled] {opacity: 0.8;cursor: not-allowed;}
-  .zip-code-error {margin-top: 10px;text-align: right;color: red;width: 100%;}
-  .step__sections .step__footer {flex-wrap: wrap;}
-  .step__sections .step__footer .zip-code-error {margin-bottom: 10px;}
-</style>
+  {% comment %}
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
+  {% endcomment %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+  <input
+    type="hidden"
+    value="{{ settings.est_xlsx }}"
+    data-error="{{ settings.est-errer-message }}"
+    data-zipcode="{{ customer.address.properties.zip }}"
+    data-suc_mgs="{{ settings.suc_mgs | replace: '#ETA#', '<date></date>' }}"
+    id="xlsx_file_url"
+  >
+  <script src="{{ 'est-delivery.js' | asset_url }}" defer></script>
+  <style>
+        button#continue_button[disabled] {opacity: 0.8;cursor: not-allowed;}
+        .zip-code-error {margin-top: 10px;text-align: right;color: red;width: 100%;}
+        .step__sections .step__footer {flex-wrap: wrap;}
+        .step__sections .step__footer .zip-code-error {margin-bottom: 10px;}
+        .pin_check.loading {
+        position: relative;
+        pointer-events: none;
+        min-width: 71px;
+        font-size: 0;
+    }
+    .pin_check.loading:after {
+        content: "";
+        width: 20px;
+        height: 20px;
+        display: block;
+        position: absolute;
+        border: 2px solid currentColor;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(0);
+        border-bottom-color: transparent;
+        animation: rotate 0.4s infinite linear;
+    }
+
+    @keyframes rotate {
+        from{
+            transform: translate(-50%, -50%) rotate(0deg)
+        }
+        to{
+            transform: translate(-50%, -50%) rotate(360deg)
+        }
+    }
+  </style>
 {% endif %}

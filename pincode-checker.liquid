@@ -1,24 +1,30 @@
-{% comment %}This is snippets file{% endcomment %}
 {% if settings.est_xlsx != blank %}
-<div class="pdp_estimate--delivery">
-  <div class="pdp_estimate--main">
-    <div class="delivery_header">
-      {% if settings.title != blank %}
-        <div class="delivery_heading">
-          {{ settings.title }}
+  <div class="pdp_estimate--delivery">
+    <div class="pdp_estimate--main">
+      <div class="delivery_header">
+        {% if block.settings.title != blank %}
+          <div class="delivery_heading">
+            {{ block.settings.title }}
+          </div>
+        {% endif %}
+        {% if block.settings.subtitle != blank %}
+          <div class="delivery_subheading">
+            {{ block.settings.subtitle }}
+          </div>
+        {% endif %}
+      </div>
+      <div class="estimate--delivery_main_wrap">
+        <div class="pincode_checker_message success"></div>
+        <div class="estimate--delivery_succcess" style="display:none">
+          <div class="after_success">{{ settings.after_success | replace: '#CODE#','<zipcode></zipcode>' }}</div>
+          <button type="button" class="pin_change">change</button>
         </div>
-      {% endif %}
-      {% if settings.subtitle != blank %}
-        <div class="delivery_subheading">
-          {{ settings.subtitle }}
+        <div class="estimate--delivery_wrap">
+          <input type="text" class="pincode_value" placeholder="Enter Pincode">
+          <button type="button" class="pin_check">check</button>
         </div>
-      {% endif %}
+        <div class="pincode_checker_message error"></div>
+      </div>
     </div>
-    <div class="estimate--delivery_wrap">
-      <input type="text" class="pincode_value" placeholder="Enter Pincode">
-      <button type="button" class="pin_check">check</button>
-    </div>
-    <div class="pincode_checker_message"></div>
   </div>
-</div>
 {% endif %}

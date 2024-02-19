@@ -2,13 +2,6 @@ var xlsxURL = $("#xlsx_file_url").val();
 
 const xlsxToArray = async (url) => {
   try {
-    // const response = await fetch(url);
-    // const data = await response.arrayBuffer();
-    // var xlsxOUT = XLSX.read(data, { type: "array" });
-    // var firstSheet = xlsxOUT.Sheets[xlsxOUT.SheetNames[0]];
-    // // header: 1 instructs xlsx to create an 'array of arrays'
-    // let pincode = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-    // console.log('response ',pincode);
     let fileReader = new FileReader();
     let blob = await fetch(url).then((r) => r.blob());
     let flag = 0;
@@ -32,8 +25,13 @@ const xlsxToArray = async (url) => {
 };
 
 $(document).on("click", ".pin_check", async function () {
-  const pinCode = $(".pincode_value").val();
-  console.log("pinCode ", pinCode);
+  var $el = $(this),
+    $wrap = $el.closest(".pdp_estimate--delivery"),
+    $checkEl = $wrap.find(".estimate--delivery_wrap"),
+    $changeEl = $wrap.find(".estimate--delivery_succcess"),
+    pinCode = $wrap.find(".pincode_value").val(),
+    $header = $wrap.find(".delivery_header");
+  $el.addClass("loading");
   if (pinCode != "") {
     let fileReader = new FileReader();
     let blob = await fetch(xlsxURL).then((r) => r.blob());
@@ -48,141 +46,154 @@ $(document).on("click", ".pin_check", async function () {
           workbook.Sheets[sheet]
         );
         if (flag == 2) {
-          console.log("rowObject ", rowObject);
           const hasAvailabl = rowObject.filter(
             (pc) => pc["pincode"] == pinCode
           );
-          console.log("hasAvailabl ", hasAvailabl);
           if (hasAvailabl.length == 0) {
             $("#CartDrawer-Checkout").attr("disabled", true);
             pin_message($("#xlsx_file_url").data("error"), false);
           } else {
             $("#CartDrawer-Checkout").attr("disabled", false);
-            pin_message("success", true);
+            let est_range = hasAvailabl[0]["est-time"];
+            let datess = formatDate(est_range, [], false);
+            let suc_mgs = $("#xlsx_file_url").data("suc_mgs");
+            let for_date = `${datess.min_eta} ${
+              datess.max_eta != null ? " to " + datess.max_eta : ""
+            }`;
+            pin_message(
+              suc_mgs.replaceAll("<date></date>", `<date>${for_date}</date>`),
+              true
+            );
+            $changeEl.find(".after_success zipcode").html(pinCode);
+            $checkEl.hide();
+            $changeEl.show();
+            $header.hide();
           }
         }
       });
+      $el.removeClass("loading");
     };
   }
 });
 
-/* START:: Shopify checkout */
-/*
-$(document).on("keyup", "#checkout_shipping_address_zip", function () {
-  const pinCode = $(this).val();
-  checkEST(pinCode);
+$(document).on("click", ".pin_change", function () {
+  var $el = $(this),
+    $wrap = $el.closest(".pdp_estimate--delivery"),
+    $checkEl = $wrap.find(".estimate--delivery_wrap"),
+    $changeEl = $wrap.find(".estimate--delivery_succcess"),
+    $header = $wrap.find(".delivery_header");
+  $checkEl.show();
+  $changeEl.hide();
+  $header.show();
 });
 
-$(document).on(
-  "change",
-  "#checkout_shipping_address_zip,#checkout_shipping_address_id,#checkout_shipping_address_country,#checkout_shipping_address_first_name,#checkout_shipping_address_last_name,#checkout_shipping_address_address1,#checkout_shipping_address_address2,#checkout_shipping_address_city,#checkout_shipping_address_province,#checkout_shipping_address_phone",
-  function () {
-    const pinCode = $("#checkout_shipping_address_zip").val();
-    checkEST(pinCode);
-  }
-);
+function formatDate(offsetRange, holidays = [], skipWeekends = false) {
+  var [minOffset, maxOffset] = offsetRange.split("-").map(Number),
+    i = minOffset,
+    j = maxOffset;
 
-try {
-  (function ($) {
-    $(document).on("page:load page:change", function () {
-      if ($("#checkout_shipping_address_zip").length > 0) {
-        const pinCode = $("#checkout_shipping_address_zip").val();
-        console.log("pinCode ", pinCode);
-        checkEST(pinCode);
-      }
-    });
-  })(Checkout.$);
-} catch (error) {
-  console.warn(error);
-}
-
- if ($(".review-block__content address.address--tight").length > 0) {
-  // const orderData = $('select[data-address-selector] option:selected').data('properties');
-  // const pinCode = orderData.zip;
-  const shippingArr = $(".review-block__content address.address--tight")
-    .text()
-    .trim()
-    .split(" ");
-  //console.log('pinCode ',pinCode);
-  // console.log('orderData ',orderData);
-  xlsxToArray(xlsxURL).then((result) => {
-    console.log("xlsxURL ", result);
-    //const hasAvailabl = result.filter((pc) => pc[0] == pinCode);
-    let hasAvailabl = false;
-    shippingArr.forEach((item) => {
-      console.log("item ", item);
-      const hasAvailablaaa = result.filter((pc) => pc[0] == item);
-      if (hasAvailablaaa.length > 0) {
-        hasAvailabl = true;
-      }
-    });
-    // console.log('hasAvailabl ',hasAvailabl);
-    if (hasAvailabl == false) {
-      $("#continue_button").attr("disabled", true);
-      if ($(".zip-code-error").length == 0) {
-        const errorMessage = $("#xlsx_file_url").data("error");
-        $(".step__sections .step__footer").prepend(
-          `<div class="zip-code-error">${errorMessage}</div>`
-        );
-      } else {
-        $(".zip-code-error").show();
-      }
-    } else {
-      $("#continue_button").attr("disabled", false);
-      $(".zip-code-error").hide();
+  const today = new Date();
+  today.setDate(today.getDate());
+  const minDate = new Date(today);
+  const maxDate = new Date(today);
+  if (skipWeekends && holidays.length > 0) {
+    while (i > 0) {
+      minDate.setDate(minDate.getDate() + 1);
+      if (!(isWeekend(minDate) || holidays.includes(formatDateStr(minDate))))
+        i--;
     }
-  });
+    while (j > 0) {
+      maxDate.setDate(maxDate.getDate() + 1);
+      if (!(isWeekend(maxDate) || holidays.includes(formatDateStr(maxDate))))
+        j--;
+    }
+  } else if (skipWeekends && holidays.length == 0) {
+    while (i > 0) {
+      minDate.setDate(minDate.getDate() + 1);
+      if (!isWeekend(minDate)) i--;
+    }
+    while (j > 0) {
+      maxDate.setDate(maxDate.getDate() + 1);
+      if (!isWeekend(maxDate)) j--;
+    }
+  } else if (!skipWeekends && holidays.length > 0) {
+    while (i > 0) {
+      minDate.setDate(minDate.getDate() + 1);
+      if (!holidays.includes(formatDateStr(maxDate))) i--;
+    }
+    while (j > 0) {
+      maxDate.setDate(maxDate.getDate() + 1);
+      if (!holidays.includes(formatDateStr(maxDate))) j--;
+    }
+  } else {
+    minDate.setDate(today.getDate() + minOffset);
+    maxDate.setDate(today.getDate() + maxOffset);
+  }
+
+  return {
+    min_eta: formatDateStr(minDate, "str"),
+    max_eta: formatDateStr(maxDate, "str"),
+  };
 }
 
-async function checkEST(pinCode) {
-  if (pinCode.length == 6) {
-    let fileReader = new FileReader();
-    let blob = await fetch(xlsxURL).then((r) => r.blob());
-    let flag = 0;
-    fileReader.readAsBinaryString(blob);
-    fileReader.onload = (event) => {
-      let data = event.target.result;
-      let workbook = XLSX.read(data, { type: "binary" });
-      const errorMessage = $("#xlsx_file_url").data("error");
-      workbook.SheetNames.forEach((sheet) => {
-        flag += 1;
-        let rowObject = XLSX.utils.sheet_to_row_object_array(
-          workbook.Sheets[sheet]
-        );
-        if (flag == 2) {
-          console.log("rowObject ", rowObject);
-          const hasAvailabl = rowObject.filter(
-            (pc) => pc["pincode"] == pinCode
-          );
-          console.log("hasAvailabl ", hasAvailabl);
-          if (hasAvailabl.length == 0) {
-            $("#continue_button").attr("disabled", true);
-            if ($(".zip-code-error").length == 0) {
-              $(".step__sections").append(
-                `<div class="zip-code-error">${errorMessage}</div>`
-              );
-            } else {
-              $(".zip-code-error").show();
-            }
-          } else {
-            $("#continue_button").attr("disabled", false);
-            $(".zip-code-error").hide();
-          }
-        }
-      });
-    };
-  }
-}*/
-/* END:: Shopify checkout */
+function formatDateStr(date, type = "dash") {
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const monthsOfYear = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const dayOfWeek = daysOfWeek[date.getDay()];
+  const monthName = monthsOfYear[date.getMonth()];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  if (
+    isNaN(year) ||
+    year == null ||
+    isNaN(month) ||
+    month == null ||
+    isNaN(day) ||
+    day == null
+  )
+    return null;
+  if (type != "dash") return `${dayOfWeek}, ${day} ${monthName}`;
+  return `${year}-${month}-${day}`;
+}
+
+function isWeekend(date) {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
 
 function pin_message(msg, status = true) {
+  if (mgs == "") return;
+  $(".pincode_checker_message").html('')
   if (status) {
-    $(".pincode_checker_message")
+    $(".pincode_checker_message.success")
       .html(msg)
       .addClass("sucess")
       .removeClass("error");
   } else {
-    $(".pincode_checker_message")
+    $(".pincode_checker_message.error")
       .html(msg)
       .addClass("error")
       .removeClass("sucess");

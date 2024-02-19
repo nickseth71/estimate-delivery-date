@@ -26,6 +26,13 @@
         "id": "est-errer-message",
         "label": "Error Message",
         "default": "Shipping not available for current Pin Code"
+      },
+      {
+        "type": "html",
+        "id": "after_success",
+        "label": "After Success Label",
+        "default": "Delivering to #CODE#",
+        "info": "Use #CODE# for the sumbmited Zip\/Pin code"
       }
     ]
   }
