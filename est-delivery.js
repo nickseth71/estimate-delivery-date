@@ -31,49 +31,49 @@ $(document).on("click", ".pin_check", async function () {
     $changeEl = $wrap.find(".estimate--delivery_succcess"),
     pinCode = $wrap.find(".pincode_value").val(),
     $header = $wrap.find(".delivery_header");
-  $el.addClass("loading");
-  if (pinCode != "") {
-    let fileReader = new FileReader();
-    let blob = await fetch(xlsxURL).then((r) => r.blob());
-    let flag = 0;
-    fileReader.readAsBinaryString(blob);
-    fileReader.onload = (event) => {
-      let data = event.target.result;
-      let workbook = XLSX.read(data, { type: "binary" });
-      workbook.SheetNames.forEach((sheet) => {
-        flag += 1;
-        let rowObject = XLSX.utils.sheet_to_row_object_array(
-          workbook.Sheets[sheet]
-        );
-        if (flag == 2) {
-          const hasAvailabl = rowObject.filter(
-            (pc) => pc["pincode"] == pinCode
-          );
-          if (hasAvailabl.length == 0) {
-            $("#CartDrawer-Checkout").attr("disabled", true);
-            pin_message($("#xlsx_file_url").data("error"), false);
-          } else {
-            $("#CartDrawer-Checkout").attr("disabled", false);
-            let est_range = hasAvailabl[0]["est-time"];
-            let datess = formatDate(est_range, [], false);
-            let suc_mgs = $("#xlsx_file_url").data("suc_mgs");
-            let for_date = `${datess.min_eta} ${
-              datess.max_eta != null ? " to " + datess.max_eta : ""
-            }`;
-            pin_message(
-              suc_mgs.replaceAll("<date></date>", `<date>${for_date}</date>`),
-              true
-            );
-            $changeEl.find(".after_success zipcode").html(pinCode);
-            $checkEl.hide();
-            $changeEl.show();
-            $header.hide();
-          }
-        }
-      });
-      $el.removeClass("loading");
-    };
+  if (pinCode.length == 0) {
+    pin_message("Enter a valid pincode", false);
+    return;
   }
+  $el.addClass("loading");
+  let fileReader = new FileReader();
+  let blob = await fetch(xlsxURL).then((r) => r.blob());
+  let flag = 0;
+  fileReader.readAsBinaryString(blob);
+  fileReader.onload = (event) => {
+    let data = event.target.result;
+    let workbook = XLSX.read(data, { type: "binary" });
+    workbook.SheetNames.forEach((sheet) => {
+      flag += 1;
+      let rowObject = XLSX.utils.sheet_to_row_object_array(
+        workbook.Sheets[sheet]
+      );
+      if (flag == 2) {
+        const hasAvailabl = rowObject.filter((pc) => pc["pincode"] == pinCode);
+        if (hasAvailabl.length == 0) {
+          $("#CartDrawer-Checkout").attr("disabled", true);
+          pin_message($("#xlsx_file_url").data("error"), false);
+        } else {
+          $("#CartDrawer-Checkout").attr("disabled", false);
+          let est_range = hasAvailabl[0]["est-time"];
+          let datess = formatDate(est_range, [], false);
+          let suc_mgs = $("#xlsx_file_url").data("suc_mgs");
+          let for_date = `${datess.min_eta} ${
+            datess.max_eta != null ? " to " + datess.max_eta : ""
+          }`;
+          pin_message(
+            suc_mgs.replaceAll("<date></date>", `<date>${for_date}</date>`),
+            true
+          );
+          $changeEl.find(".after_success zipcode").html(pinCode);
+          $checkEl.hide();
+          $changeEl.show();
+          $header.hide();
+        }
+      }
+    });
+    $el.removeClass("loading");
+  };
 });
 
 $(document).on("click", ".pin_change", function () {
@@ -185,8 +185,8 @@ function isWeekend(date) {
 }
 
 function pin_message(msg, status = true) {
-  if (mgs == "") return;
-  $(".pincode_checker_message").html('')
+  if (msg == "") return;
+  $(".pincode_checker_message").html("");
   if (status) {
     $(".pincode_checker_message.__success")
       .html(msg)
