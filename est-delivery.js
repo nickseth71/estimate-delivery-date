@@ -187,15 +187,14 @@ function isWeekend(date) {
 function pin_message(msg, status = true) {
   if (msg == "") return;
   $(".pincode_checker_message").html("");
+  $(".pdp_estimate--delivery, .pincode_checker_message").removeClass(
+    "error success"
+  );
   if (status) {
-    $(".pincode_checker_message.__success")
-      .html(msg)
-      .addClass("sucess")
-      .removeClass("error");
+    $(".pincode_checker_message.__success").html(msg).addClass("sucess");
+    $(".pdp_estimate--delivery").addClass("error");
   } else {
-    $(".pincode_checker_message.__error")
-      .html(msg)
-      .addClass("error")
-      .removeClass("sucess");
+    $(".pincode_checker_message.__error").html(msg).addClass("error");
+    $(".pdp_estimate--delivery").addClass("success");
   }
 }
