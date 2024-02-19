@@ -191,10 +191,10 @@ function pin_message(msg, status = true) {
     "error success"
   );
   if (status) {
-    $(".pincode_checker_message.__success").html(msg).addClass("sucess");
-    $(".pdp_estimate--delivery").addClass("error");
+    $(".pincode_checker_message.__success").html(msg).addClass("success");
+    $(".pdp_estimate--delivery").addClass("success");
   } else {
     $(".pincode_checker_message.__error").html(msg).addClass("error");
-    $(".pdp_estimate--delivery").addClass("success");
+    $(".pdp_estimate--delivery").addClass("error");
   }
 }
