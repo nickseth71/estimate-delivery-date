@@ -14,7 +14,7 @@
         {% endif %}
       </div>
       <div class="estimate--delivery_main_wrap">
-        <div class="pincode_checker_message success"></div>
+        <div class="pincode_checker_message __success"></div>
         <div class="estimate--delivery_succcess" style="display:none">
           <div class="after_success">{{ settings.after_success | replace: '#CODE#','<zipcode></zipcode>' }}</div>
           <button type="button" class="pin_change">change</button>
@@ -23,7 +23,7 @@
           <input type="text" class="pincode_value" placeholder="Enter Pincode">
           <button type="button" class="pin_check">check</button>
         </div>
-        <div class="pincode_checker_message error"></div>
+        <div class="pincode_checker_message __error"></div>
       </div>
     </div>
   </div>

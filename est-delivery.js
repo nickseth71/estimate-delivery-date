@@ -188,12 +188,12 @@ function pin_message(msg, status = true) {
   if (mgs == "") return;
   $(".pincode_checker_message").html('')
   if (status) {
-    $(".pincode_checker_message.success")
+    $(".pincode_checker_message.__success")
       .html(msg)
       .addClass("sucess")
       .removeClass("error");
   } else {
-    $(".pincode_checker_message.error")
+    $(".pincode_checker_message.__error")
       .html(msg)
       .addClass("error")
       .removeClass("sucess");
