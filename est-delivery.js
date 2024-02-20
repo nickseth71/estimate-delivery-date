@@ -31,10 +31,15 @@ $(document).on("click", ".pin_check", async function () {
     $changeEl = $wrap.find(".estimate--delivery_succcess"),
     pinCode = $wrap.find(".pincode_value").val(),
     $header = $wrap.find(".delivery_header");
-  if (pinCode.length == 0) {
+  console.log(validateIndianPIN(pinCode), "<<<<");
+  if (!validateIndianPIN(pinCode)) {
     pin_message("Enter a valid pincode", false);
     return;
   }
+  $(".pincode_checker_message").html("");
+  $(".pdp_estimate--delivery, .pincode_checker_message").removeClass(
+    "error success"
+  );
   $el.addClass("loading");
   let fileReader = new FileReader();
   let blob = await fetch(xlsxURL).then((r) => r.blob());
@@ -76,6 +81,15 @@ $(document).on("click", ".pin_check", async function () {
   };
 });
 
+$(document).on("keypress", ".pincode_value", function (event) {
+  if (event.which === 13) {
+    var $el = $(this),
+      $wrap = $el.closest(".pdp_estimate--delivery"),
+      $btn = $wrap.find(".pin_check");
+    $btn.click();
+  }
+});
+
 $(document).on("click", ".pin_change", function () {
   var $el = $(this),
     $wrap = $el.closest(".pdp_estimate--delivery"),
@@ -86,6 +100,11 @@ $(document).on("click", ".pin_change", function () {
   $changeEl.hide();
   $header.show();
 });
+
+function validateIndianPIN(pin) {
+  var regex = /^[1-9][0-9]{5}$/;
+  return regex.test(pin);
+}
 
 function formatDate(offsetRange, holidays = [], skipWeekends = false) {
   var [minOffset, maxOffset] = offsetRange.split("-").map(Number),

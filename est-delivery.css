@@ -1,0 +1,91 @@
+.estimate--delivery_wrap input {
+    font-size: 12px;
+    color: #000;
+    display: inline-block;
+    padding: 10px 8px;
+    border: none;
+    width: calc(100% - 75px);
+    height: auto;
+  background: transparent;
+}
+
+.estimate--delivery_wrap {
+    border-color: #207bb4;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+button.pin_check, button.pin_change {
+    background: transparent;
+    border: none;
+    font-size: 12px;
+    color: #207bb4;
+    text-transform: uppercase;
+    padding: 10px 13px;
+    vertical-align: middle;
+    cursor: pointer;
+    font-weight: 700;
+}
+.product__info-container .icon-with-text--horizontal {
+    gap: 2rem;
+}
+.delivery_subheading {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    margin-bottom: 8px;
+    gap: 3px;
+    /* color: #000; */
+    font-weight: 600;
+}
+zipcode {
+    color: #207bb4;
+}
+
+.pincode_checker_message.success {
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+}
+
+.pincode_checker_message.success date {
+    /* margin-left: 5px; */
+    text-transform: none;
+    color: #2ca003;
+}
+.delivery_subheading strong {
+    color: #207bb4;
+}
+
+.delivery_heading, .after_success {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 12px;
+    padding: 7px 7px 7px 0;
+    font-weight: 800;
+}
+.estimate--delivery_succcess {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.estimate--delivery_wrap input:focus, .estimate--delivery_wrap input:focus-visible {
+  outline: 0;
+  box-shadow: none;
+}
+.pdp_estimate--delivery {
+    padding-top: 0.5rem;
+    border-top: 3px solid #eee;
+    border-bottom: 3px solid #eee;
+}
+.pincode_checker_message.error  {
+    color: #db3236;
+    font-size: 12px;
+    padding-top: 4px;
+}
+.pdp_estimate--delivery.error .estimate--delivery_wrap {
+        border-color: #db3236;
+}
